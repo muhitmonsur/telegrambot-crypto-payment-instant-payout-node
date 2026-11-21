@@ -3,7 +3,7 @@ export interface PayerurlConfig {
   publicKey: string;
   /** Secret API key — keep on the server only; never expose in browser bundles */
   secretKey: string;
-  /** Payment API endpoint (default: https://api-v2.payerurl.com/api/payment) */
+  /** Payment API endpoint (default: https://api-v2.payerurl.com/api/telegramPayment) */
   apiUrl?: string;
   /** Optional Fetch-compatible transport, useful for tests or custom runtimes. */
   fetch?: typeof globalThis.fetch;

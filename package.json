@@ -1,6 +1,6 @@
 {
-  "name": "@muhitmonsur/crypto-payment-gateway-binance-api",
-  "version": "1.0.8",
+  "name": "@muhitmonsur/telegrambot-crypto-payment-instant-payout-node",
+  "version": "1.0.0",
   "access": "public",
   "description": "Crypto payment gateway SDK and Binance API for Node.js frameworks",
   "keywords": [
@@ -51,10 +51,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/muhitmonsur/crypto-payment-gateway-binance-api.git"
+    "url": "git+https://github.com/muhitmonsur/telegrambot-crypto-payment-instant-payout-node"
   },
   "bugs": {
-    "url": "https://github.com/muhitmonsur/crypto-payment-gateway-binance-api/issues"
+    "url": "https://github.com/muhitmonsur/telegrambot-crypto-payment-instant-payout-node/issues"
   },
   "homepage": "https://payerurl.com",
   "devDependencies": {

@@ -1,107 +1,57 @@
-# Crypto gateway || Binance API (no merchant account needed) || all instant payout
+# PayerURL Telegram Bot Crypto Payment SDK
 
-[![npm version](https://img.shields.io/npm/v/@muhitmonsur/crypto-payment-gateway-binance-api.svg)](https://www.npmjs.com/package/@muhitmonsur/crypto-payment-gateway-binance-api)
-[![npm downloads](https://img.shields.io/npm/dm/@muhitmonsur/crypto-payment-gateway-binance-api.svg)](https://www.npmjs.com/package/@muhitmonsur/crypto-payment-gateway-binance-api)
-[![license](https://img.shields.io/npm/l/@muhitmonsur/crypto-payment-gateway-binance-api.svg)](LICENSE)
+[![npm version](https://img.shields.io/npm/v/@muhitmonsur/telegrambot-crypto-payment-instant-payout-node.svg)](https://www.npmjs.com/package/@muhitmonsur/telegrambot-crypto-payment-instant-payout-node)
+[![license](https://img.shields.io/npm/l/@muhitmonsur/telegrambot-crypto-payment-instant-payout-node.svg)](LICENSE)
 
+Server-side Node.js SDK for creating PayerURL crypto payments and verifying payment webhooks in Telegram bot and Node.js applications.
 
+**Powered by [PayerURL](https://payerurl.com)** — instant crypto payments to your wallet.
 
-Server-side SDK for connecting **Node.js** applications through payerurl api . Use it with Express, Next.js, NestJS, Nuxt, or any Node backend serving React, Vue, Angular, and other frontends.
+- [Get API keys](https://dash.payerurl.com/profile/get-api-credentials)
+- [PayerURL dashboard](https://dash.payerurl.com)
+- [Telegram support](https://t.me/Payerurl)
 
-> Receive customer payments directly and instantly in your crypto wallet. Accept BTC, ETH, USDT, and USDC from customers across all major networks.
-> 
-> Accept payment using your binance regular account QR code payment (C2C). 
+## Requirements
 
-**Powered by [PayerURL](https://payerurl.com)**
+- Node.js 18 or newer
+- A PayerURL public key and secret key
 
- 🔑 [Get API Key](https://dash.payerurl.com) | 💬 [Telegram Support](https://t.me/Payerurl)
-
----
-
-## Overview
-
-This payment gateway lets customers pay directly on your store's checkout page. Once paid, the order automatically confirms via instant webhooks. Store owners can view complete transaction records in their PayerURL dashboard. PayerURL is safe, secure, and uses real-time exchange rates.
-
-Depending on your PayerURL settings, your checkout offers:
-
-- Popular Cryptos: Accepts Bitcoin, Ethereum, USDT, and USDC.
-- Major Networks: Works on TRON (TRC20), Ethereum (ERC20), Binance Smart Chain (BEP20), and Bitcoin networks.
-- Binance QR Code: Customers can pay by scanning a QR code with a personal Binance account—no merchant account needed.
-- Global Currencies: Supports 169+ local currencies with automatic, live conversion to crypto.
-- Card Payments: Options to buy crypto and pay instantly using credit cards, debit cards, Google Pay, or Apple Pay.
-- New Address Per Order: Creates a unique receiving address for every order using XPUB to keep payments private and secure.
-
----
-
-
----
-
-## Install
-
-Requires Node.js 18 or newer.
-
-### npm
+## Installation
 
 ```bash
-npm i @muhitmonsur/crypto-payment-gateway-binance-api
+npm install @muhitmonsur/telegrambot-crypto-payment-instant-payout-node
 ```
-
-### Yarn
 
 ```bash
-yarn add @muhitmonsur/crypto-payment-gateway-binance-api
+yarn add @muhitmonsur/telegrambot-crypto-payment-instant-payout-node
 ```
-
-### pnpm
 
 ```bash
-pnpm add @muhitmonsur/crypto-payment-gateway-binance-api
+pnpm add @muhitmonsur/telegrambot-crypto-payment-instant-payout-node
 ```
 
-### Import
+## Import
 
-ES modules and TypeScript:
+### ES modules / TypeScript
+
+```ts
+import { Payerurl } from '@muhitmonsur/telegrambot-crypto-payment-instant-payout-node';
+```
+
+### CommonJS
 
 ```js
-import { Payerurl } from 'crypto-payment-gateway-binance-api';
+const { Payerurl } = require('@muhitmonsur/telegrambot-crypto-payment-instant-payout-node');
 ```
 
-CommonJS:
+## Server-side credentials
 
-```js
-const { Payerurl } = require('crypto-payment-gateway-binance-api');
-```
-
----
-
-## Important: server-side only
-
-This package uses your **secret key** for HMAC signing.  
-**Do not** import it in browser React / Vue / Angular code.
-
-| Layer | What to do |
-|---|---|
-| Backend (Express, Next API, Nest, Nuxt server) | Create payment + verify webhook with this SDK |
-| Frontend (React, Vue, Angular) | Call your API → redirect user to `redirectUrl` |
-
----
-
-## Environment
+This SDK signs API requests with a secret key. Keep it in server environment variables and never expose it in browser code or Telegram bot source distributed to users.
 
 ```env
 PAYERURL_PUBLIC_KEY=your_public_key
 PAYERURL_SECRET_KEY=your_secret_key
 ```
-
-Get keys: https://dash.payerurl.com/profile/get-api-credentials
-
-Most frameworks load `.env` files automatically. For a plain Node.js application, Node 20.6+ can load the file directly:
-
-```bash
-node --env-file=.env server.js
-```
-
-Fail fast when credentials are missing instead of starting a payment server with an invalid configuration:
 
 ```js
 const { PAYERURL_PUBLIC_KEY, PAYERURL_SECRET_KEY } = process.env;
@@ -111,12 +61,10 @@ if (!PAYERURL_PUBLIC_KEY || !PAYERURL_SECRET_KEY) {
 }
 ```
 
----
-
 ## Quick start
 
 ```js
-import { Payerurl } from 'crypto-payment-gateway-binance-api';
+import { Payerurl } from '@muhitmonsur/telegrambot-crypto-payment-instant-payout-node';
 
 const payerurl = new Payerurl({
   publicKey: process.env.PAYERURL_PUBLIC_KEY,
@@ -124,61 +72,46 @@ const payerurl = new Payerurl({
 });
 
 const result = await payerurl.payment({
-  invoiceId: `ORD-${Date.now()}`,
-  amount: 1000, // cents / smallest unit
+  invoiceId: `ORDER-${Date.now()}`,
+  amount: 1000,
   currency: 'usd',
   data: {
     first_name: 'Alice',
     last_name: 'Smith',
     email: 'alice@example.com',
-    redirect_url: 'https://yourdomain.com/success',
-    cancel_url: 'https://yourdomain.com/checkout',
-    notify_url: 'https://yourdomain.com/api/payerurl/notify', // required
+    redirect_url: 'https://yourdomain.com/payment/success',
+    cancel_url: 'https://yourdomain.com/payment/cancel',
+    notify_url: 'https://yourdomain.com/api/payerurl/notify',
   },
   orderItems: [
-    { name: 'Order_item_name', qty: 1, price: '10.00' },
+    {
+      name: 'Telegram bot subscription',
+      qty: 1,
+      price: '10.00',
+    },
   ],
 });
 
 if (result.status) {
-  // Redirect customer to hosted checkout
   console.log(result.redirectUrl);
 } else {
   console.error(result.message);
 }
 ```
 
-Unlike the Laravel package, **you must pass `notify_url`** — there is no auto-registered route in Node.
+The SDK uses the PayerURL Telegram payment API endpoint by default:
 
----
-
-## Webhook verification
-
-```js
-const result = payerurl.verifyWebhook({
-  authorization: req.headers.authorization,
-  authStr: req.body?.authStr, // fallback if Authorization header missing
-  body: req.body,
-});
-
-if (result.ok) {
-  const { order_id, transaction_id } = result.payload;
-  // mark order paid
-  res.json({ status: 2040, message: result.payload });
-} else {
-  res.status(400).json({ status: result.status, message: result.message });
-}
+```text
+https://api-v2.payerurl.com/api/telegramPayment
 ```
 
----
+You can override it through the optional `apiUrl` constructor option.
 
-## Framework examples
-
-### Express
+## Express webhook example
 
 ```js
 import express from 'express';
-import { Payerurl } from 'crypto-payment-gateway-binance-api';
+import { Payerurl } from '@muhitmonsur/telegrambot-crypto-payment-instant-payout-node';
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
@@ -189,23 +122,26 @@ const payerurl = new Payerurl({
   secretKey: process.env.PAYERURL_SECRET_KEY,
 });
 
-app.post('/api/pay', async (req, res) => {
+app.post('/api/payment', async (req, res) => {
   const result = await payerurl.payment({
-    invoiceId: `ORD-${Date.now()}`,
+    invoiceId: req.body.invoiceId,
     amount: Number(req.body.amount),
-    currency: 'usd',
+    currency: req.body.currency || 'usd',
     data: {
       first_name: req.body.first_name,
       last_name: req.body.last_name,
       email: req.body.email,
-      redirect_url: 'https://yourdomain.com/success',
-      cancel_url: 'https://yourdomain.com/checkout',
+      redirect_url: 'https://yourdomain.com/payment/success',
+      cancel_url: 'https://yourdomain.com/payment/cancel',
       notify_url: 'https://yourdomain.com/api/payerurl/notify',
     },
   });
 
-  if (result.status) return res.json({ redirectUrl: result.redirectUrl });
-  return res.status(400).json({ error: result.message });
+  if (!result.status) {
+    return res.status(400).json({ message: result.message });
+  }
+
+  return res.json({ redirectUrl: result.redirectUrl });
 });
 
 app.post('/api/payerurl/notify', (req, res) => {
@@ -216,42 +152,53 @@ app.post('/api/payerurl/notify', (req, res) => {
   });
 
   if (!result.ok) {
-    return res.status(400).json({ status: result.status, message: result.message });
+    return res.status(400).json({
+      status: result.status,
+      message: result.message,
+    });
   }
 
-  // update order: result.payload.order_id
+  // Fulfill the invoice only after successful verification.
+  console.log(result.payload);
   return res.json({ status: result.status, message: result.payload });
 });
 
-app.listen(3000, () => {
-  console.log('Server running at http://localhost:3000');
-});
+app.listen(3000);
 ```
 
-### React / Vue / Angular (frontend)
+## Telegram bot usage
 
-Frontend only redirects after your backend returns the URL:
+Send the SDK's `redirectUrl` to the user as a normal link or inline keyboard button. A Telegram bot is not a browser for PayerURL checkout, so the hosted checkout link must be opened separately and the payment callback must be verified by the bot server.
 
 ```js
-// React / Vue / Angular service
-async function payWithCrypto(order) {
-  const res = await fetch('/api/pay', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(order),
+// Telegram bot framework pseudocode
+const result = await payerurl.payment({
+  invoiceId: `TG-${chatId}-${Date.now()}`,
+  amount: 1000,
+  currency: 'usd',
+  data: {
+    redirect_url: 'https://yourdomain.com/payment/success',
+    cancel_url: 'https://yourdomain.com/payment/cancel',
+    notify_url: 'https://yourdomain.com/api/payerurl/notify',
+  },
+});
+
+if (result.status) {
+  await bot.sendMessage(chatId, 'Complete your payment:', {
+    reply_markup: {
+      inline_keyboard: [[
+        { text: 'Pay with crypto', url: result.redirectUrl },
+      ]],
+    },
   });
-  const data = await res.json();
-  if (data.redirectUrl) {
-    window.location.href = data.redirectUrl;
-  }
 }
 ```
 
-### Next.js (App Router API route)
+## Next.js App Router
 
 ```ts
-// app/api/pay/route.ts
-import { Payerurl } from 'crypto-payment-gateway-binance-api';
+// app/api/payment/route.ts
+import { Payerurl } from '@muhitmonsur/telegrambot-crypto-payment-instant-payout-node';
 import { NextResponse } from 'next/server';
 
 const payerurl = new Payerurl({
@@ -266,8 +213,12 @@ export async function POST(req: Request) {
     amount: body.amount,
     currency: body.currency || 'usd',
     data: {
-      ...body.customer,
-      notify_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/payerurl/notify`,
+      first_name: body.first_name,
+      last_name: body.last_name,
+      email: body.email,
+      redirect_url: `${process.env.APP_URL}/payment/success`,
+      cancel_url: `${process.env.APP_URL}/payment/cancel`,
+      notify_url: `${process.env.APP_URL}/api/payerurl/notify`,
     },
   });
 
@@ -277,7 +228,7 @@ export async function POST(req: Request) {
 
 ```ts
 // app/api/payerurl/notify/route.ts
-import { Payerurl } from 'crypto-payment-gateway-binance-api';
+import { Payerurl } from '@muhitmonsur/telegrambot-crypto-payment-instant-payout-node';
 import { NextResponse } from 'next/server';
 
 const payerurl = new Payerurl({
@@ -304,35 +255,12 @@ export async function POST(req: Request) {
     );
   }
 
-  // update order from result.payload
-  return NextResponse.json({ status: result.status, message: result.payload });
-}
-```
-
-### NestJS
-
-```ts
-import { Injectable } from '@nestjs/common';
-import { Payerurl } from 'crypto-payment-gateway-binance-api';
-
-@Injectable()
-export class PaymentService {
-  private client = new Payerurl({
-    publicKey: process.env.PAYERURL_PUBLIC_KEY!,
-    secretKey: process.env.PAYERURL_SECRET_KEY!,
+  return NextResponse.json({
+    status: result.status,
+    message: result.payload,
   });
-
-  createPayment(input: Parameters<Payerurl['payment']>[0]) {
-    return this.client.payment(input);
-  }
-
-  handleNotify(authorization: string | undefined, body: Record<string, unknown>) {
-    return this.client.verifyWebhook({ authorization, body, authStr: body.authStr as string });
-  }
 }
 ```
-
----
 
 ## API
 
@@ -340,57 +268,75 @@ export class PaymentService {
 
 | Option | Type | Required | Description |
 |---|---|---|---|
-| `publicKey` | string | Yes | API public key |
-| `secretKey` | string | Yes | API secret key (server only) |
-| `apiUrl` | string | No | Default `https://api-v2.payerurl.com/api/payment` |
-| `fetch` | function | No | Custom Fetch-compatible transport |
+| `publicKey` | `string` | Yes | PayerURL API public key |
+| `secretKey` | `string` | Yes | PayerURL API secret key; keep it server-side |
+| `apiUrl` | `string` | No | Defaults to `https://api-v2.payerurl.com/api/telegramPayment` |
+| `fetch` | `typeof fetch` | No | Custom Fetch-compatible transport |
 
-The constructor throws if either API key is missing. Keep both credentials in server-side environment variables; never send the secret key to a browser.
+The constructor throws if `publicKey` or `secretKey` is missing.
 
 ### `payment(request)`
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `invoiceId` | string | Yes | Unique order ID |
-| `amount` | number | Yes | Amount in smallest unit |
-| `currency` | string | No | Default `usd` |
-| `data` | object | Yes | Customer and callback information |
-| `data.first_name` | string | No | Customer first name |
-| `data.last_name` | string | No | Customer last name |
-| `data.email` | string | No | Customer email address |
-| `data.notify_url` | string | Yes | Webhook URL |
-| `data.redirect_url` | string | Yes | Success redirect |
-| `data.cancel_url` | string | Yes | Cancel redirect |
-| `orderItems` | array | No | Checkout line items |
-| `type` | string | No | Integration identifier; default `nodejs` |
+| `invoiceId` | `string` | Yes | Unique order or invoice ID |
+| `amount` | `number` | Yes | Positive integer in the smallest currency unit |
+| `currency` | `string` | No | Fiat currency code; defaults to `usd` |
+| `data` | `object` | Yes | Customer and callback information |
+| `data.first_name` | `string` | No | Customer first name |
+| `data.last_name` | `string` | No | Customer last name |
+| `data.email` | `string` | No | Customer email |
+| `data.redirect_url` | `string` | Yes | Success redirect URL |
+| `data.cancel_url` | `string` | Yes | Cancel redirect URL |
+| `data.notify_url` | `string` | Yes | Webhook notification URL |
+| `orderItems` | `array` | No | Optional checkout line items |
+| `type` | `string` | No | Integration type; defaults to `nodejs` |
 
 Each `orderItems` entry accepts:
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `name` | string | Yes | Product name; spaces are converted to underscores |
-| `qty` | number or string | Yes | Quantity |
-| `price` | number or string | Yes | Item price |
+| `name` | `string` | Yes | Product name; spaces are converted to underscores |
+| `qty` | `number \| string` | Yes | Quantity |
+| `price` | `number \| string` | Yes | Item price |
 
-**Success:** `{ status: true, redirectUrl: '...' }`
+**Success**
 
-**Error:** `{ status: false, message: '...' }`
+```js
+{ status: true, redirectUrl: 'https://...' }
+```
 
-`payment()` resolves to a result object for API, validation, and network failures. Check `result.status` before using `redirectUrl`.
+**Error**
 
-### `verifyWebhook({ authorization, authStr, body })`
+```js
+{ status: false, message: 'Human-readable error' }
+```
 
-**Success:** `{ ok: true, status: 2040, payload }`
+### `verifyWebhook(input)`
 
-**Failure:** `{ ok: false, status, message }`
+```js
+const result = payerurl.verifyWebhook({
+  authorization: req.headers.authorization,
+  authStr: req.body?.authStr,
+  body: req.body,
+});
+```
 
 | Input | Required | Description |
 |---|---|---|
-| `authorization` | Preferred | Raw `Authorization` header, normally `Bearer ...` |
-| `authStr` | Fallback | Base64 token supplied in the request body when the header is unavailable |
+| `authorization` | Preferred | Raw `Authorization` header |
+| `authStr` | Fallback | Base64 webhook token when the Authorization header is unavailable |
 | `body` | Yes | Parsed JSON or URL-encoded webhook fields |
 
-Application status codes returned by webhook verification:
+**Webhook result**
+
+```js
+{ ok: true, status: 2040, message: payload, payload }
+```
+
+```js
+{ ok: false, status: 2030, message: 'Signature not matched' }
+```
 
 | Status | Meaning |
 |---|---|
@@ -399,116 +345,30 @@ Application status codes returned by webhook verification:
 | `2050` | Required order data is missing or the order is not complete |
 | `20000` | Order was cancelled |
 
-Only fulfill an order when `result.ok === true`. Store the `transaction_id` and make webhook processing idempotent so a repeated callback cannot fulfill an order twice.
+Only fulfill an order when `result.ok === true`. Store the `transaction_id` and make fulfillment idempotent.
 
-### Utility exports
+## Utility exports
 
-Advanced integrations may also import `buildQueryString`, `signPayload`, `createAuthHeader`, `parseAuthToken`, and `safeEqual`. Most applications should use `payment()` and `verifyWebhook()` rather than assembling signatures manually.
+The package also exports:
 
----
+- `buildQueryString`
+- `signPayload`
+- `createAuthHeader`
+- `parseAuthToken`
+- `safeEqual`
+
+These helpers are intended for advanced integrations. Most applications should use `payment()` and `verifyWebhook()`.
 
 ## Production checklist
 
-- Keep `PAYERURL_SECRET_KEY` on the server and out of frontend bundles and public logs.
-- Serve `notify_url`, `redirect_url`, and `cancel_url` over HTTPS in production.
-- Verify every webhook before changing an order or delivering a product.
-- Match the webhook `order_id` to an existing order and verify the expected amount and currency in your own database.
-- Make webhook handling idempotent by recording processed transaction IDs.
-- Return a response promptly, then move slow fulfillment work to a queue where appropriate.
-
----
-
-## Payment flow
-
-```
-Your Node API → PayerURL API → Checkout Page → Customer Pays (Binance/Crypto)
-                                                       ↓
-Your Wallet ← Funds ← Blockchain confirmation
-                                                       ↓
-              Your notify_url ← Webhook (verify with SDK)
-```
-
-## Support
-
-| Channel | Link |
-|---|---|
-| Telegram | [t.me/Payerurl](https://t.me/Payerurl) |
-| Website | [payerurl.com](https://payerurl.com) |
-| Dashboard | [dash.payerurl.com](https://dash.payerurl.com) |
+- Store API credentials only on the server.
+- Use HTTPS for `redirect_url`, `cancel_url`, and `notify_url`.
+- Verify every webhook before fulfilling an order.
+- Match `order_id` with an existing invoice.
+- Verify the paid amount and currency in your own database.
+- Record processed `transaction_id` values to prevent duplicate fulfillment.
+- Do not expose the secret key to Telegram users or browser bundles.
 
 ## License
 
 MIT
-
-
-### 🌐 Description
-
-This SDK, powered by [PayerURL](https://payerurl.com), is a **non-custodial** crypto payment gateway that connects WooCommerce directly to your wallets. Payments receive in your wallet instantly, with no middlemen.
-
-With **XPUB (Extended Public Key)** support, the plugin can rotate through unlimited receiving addresses. This suits high-volume stores, crypto exchanges, and enterprise merchants.
-
-### ⚙️ How It Works
-
-1. The customer picks a cryptocurrency at checkout.
-2. Your fiat price (USD, EUR, GBP, JPY, CAD, AUD and 160+ more) is converted at the **live exchange rate**.
-3. The customer pays on-chain or with Binance Pay.
-4. Once the payment is confirmed, funds are credited **instantly to your wallet**.
-5. The WooCommerce order moves to **Processing** automatically through the API webhook. No manual steps are needed.
-
----
-
-### 🌐 Supported Cryptocurrencies
-
-| Currency | Network / Method | Notes |
-|---|---|---|
-| **Bitcoin (BTC)** | Bitcoin | The world's #1 cryptocurrency |
-| **Ethereum (ETH)** | ERC20 | Leading smart-contract blockchain |
-| **USDT** | TRC20 (TRON) | Ultra-low fees |
-| **USDT** | ERC20 (Ethereum) | Tether on Ethereum |
-| **USDC** | ERC20 (Ethereum) | Trusted stablecoin |
-| **Binance QR Code** | Scan-to-pay | Contactless |
-| **TON** | The Open Network | |
-| **XPUB addresses** | HD wallet | Auto-rotating, unlimited transactions |
-
----
-
-### ✨ Key Features
-
-| Feature | Detail |
-|---|---|
-| 🔑 **XPUB integration** | A unique address is generated for every order, for mass-volume transactions |
-| 🔗 **10+ crypto networks** | BTC, ETH, USDT (TRC20/ERC20), USDC (ERC20), Binance Pay, Binance QR, TON and more |
-| 💱 **169+ fiat currencies** | USD, EUR, GBP, JPY, CAD, AUD, INR and more, at real-time rates |
-| 🏦 **Non-custodial & trustless** | Funds go straight to your wallet. We never hold your crypto |
-| 🆓 **No KYC** | No identity verification on the Basic (free) plan |
-| 🚫 **No bank account needed** | Accept crypto with no traditional banking setup |
-| 💳 **Buy crypto with card or bank** | Customers can pay with Visa, Mastercard, credit/debit card or bank transfer. It is auto-converted to crypto for you |
-| ⏳ **Pay Later** | Flexible payment timing for customers |
-| ➗ **Auto partial-payment handling** | Order is marked *Processing* when ≥ 90% of the payment is received |
-| 🏷️ **Crypto discounts** | Offer crypto-specific discounts to encourage on-chain payments |
-| 📈 **Live exchange rate** | Real-time crypto/fiat conversion at checkout |
-| 🧱 **WooCommerce Blocks compatible** | Fully supports the modern checkout blocks |
-| 🚀 **HPOS compatible** | Ready for WooCommerce High-Performance Order Storage |
-| 🌍 **5 languages** | English, Spanish, Russian, Arabic and Portuguese |
-| ⚡ **Easy API key setup** | One-click credential check and save |
-| 📖 **Free & open source** | No hidden fees on the plugin itself |
-
----
-
-
-
-## 🖼 Screenshots
-
-![Screenshot 1](https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-1.png)
-![Screenshot 2](https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-2.png)
-![Screenshot 4](https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-4.png)
-![Screenshot 5](https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-5.png)
-![Screenshot 6](https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-6.png)
-![Screenshot 7](https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-7.png)
-![Screenshot 8](https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-8.png)
-
----
-
-## 🏷️ Keywords
-
-`crypto payment` `bitcoin payment laravel` `binance payment gateway` `usdt payment laravel` `usdc payment laravel` `crypto checkout laravel` `binance qr code laravel`  `binance pay api` `laravel crypto gateway` `best crypto payment gateway` `fiat to crypto payment gateway` `cryptocurrency payment gateway`

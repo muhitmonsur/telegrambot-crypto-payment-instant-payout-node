@@ -1,0 +1,65 @@
+{
+  "name": "@muhitmonsur/crypto-payment-gateway-binance-api",
+  "version": "1.0.8",
+  "access": "public",
+  "description": "Crypto payment gateway SDK and Binance API for Node.js frameworks",
+  "keywords": [
+    "crypto checkout",
+    "binance api",
+    "binance c2c",
+    "crypto payment",
+    "usdt payment",
+    "binance payment",
+    "bitcoin payment",
+    "crypto api",
+	"bitcoin payment gateway",
+	"best crypto payment gateway", 
+	  "fiat to crypto payment gateway",
+	  "cryptocurrency payment gateway"
+  ],
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
+    "check": "tsc --noEmit",
+    "test": "npm run build && node --test",
+    "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "sideEffects": false,
+  "author": {
+    "name": "Rashiqul Rony",
+    "email": "rashiqulrony@gmail.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/muhitmonsur/crypto-payment-gateway-binance-api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/muhitmonsur/crypto-payment-gateway-binance-api/issues"
+  },
+  "homepage": "https://payerurl.com",
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.2"
+  }
+}
